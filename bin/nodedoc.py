@@ -199,6 +199,12 @@ def generate_nodedoc_path(html_path, nodedoc_path):
     #
     #    <p>Change file timestamps of the file referenced by the supplied path.</p>
 
+    # HTML escapes
+    content = content \
+        .replace('&gt;', '>') \
+        .replace('&lt;', '<') \
+        .replace('&amp;', '&')
+
     codecs.open(nodedoc_path, 'w', 'utf-8').write(content)
 
 
@@ -211,7 +217,7 @@ def nodedoc(section):
     if not exists(html_path) or mtime(html_path) < mtime(markdown_path):
         generate_html_path(markdown_path, html_path)
 
-    nodedoc_path = join(CACHE_DIR, section + ".nodedoc")
+    nodedoc_path = join(CACHE_DIR, "%s-%s.nodedoc" % (section, __version__))
     if not exists(nodedoc_path) or mtime(nodedoc_path) < mtime(html_path):
         generate_nodedoc_path(html_path, nodedoc_path)
 

@@ -2,7 +2,7 @@
 
 ## 1.0.3 (not yet released)
 
-(nothing yet)
+- Fix `&gt;`, `&lt;` and `&amp;` escapes.
 
 
 ## 1.0.2
