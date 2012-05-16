@@ -1,5 +1,10 @@
 # nodedoc Changelog
 
+## 1.0.3 (not yet released)
+
+(nothing yet)
+
+
 ## 1.0.2
 
 - Use "less -R" if no PAGER is set to not get this warning from less:
