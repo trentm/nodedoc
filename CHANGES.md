@@ -1,5 +1,10 @@
 # nodedoc Changelog
 
+## 1.0.4 (not yet released)
+
+(nothing yet)
+
+
 ## 1.0.3
 
 - Fix `&gt;`, `&lt;` and `&amp;` escapes.
