@@ -1,6 +1,6 @@
 # nodedoc Changelog
 
-## 1.0.1 (not yet released)
+## 1.0.1
 
 - Fix paths for npm-installed nodedoc.
 
