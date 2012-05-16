@@ -9,7 +9,7 @@ Usage:
 See <https://github.com/trentm/nodedoc> for more info.
 """
 
-__version_info__ = (1, 0, 0)
+__version_info__ = (1, 0, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 import re
@@ -23,6 +23,8 @@ import optparse
 from glob import glob
 
 TOP = dirname(dirname(abspath(__file__)))
+if not exists(join(TOP, "tools", "cutarelease.py")):  # installed layout
+    TOP = join(TOP, "lib", "node_modules", "nodedoc")
 sys.path.insert(0, join(TOP, "deps"))
 import markdown2
 import appdirs
