@@ -8,7 +8,7 @@
   },
   "author": "Trent Mick <trentm@gmail.com> (http://trentm.com)",
   "bin": {
-    "nodedoc": "./bin/nodedoc.py",
+    "nodedoc": "./bin/nodedoc.py"
   },
   "keywords": ["doc", "docs", "documentation", "perldoc"]
 }
