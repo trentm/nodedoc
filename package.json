@@ -1,0 +1,14 @@
+{
+  "name": "nodedoc",
+  "description": "a fledgling perldoc for node",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/trentm/nodedoc.git"
+  },
+  "author": "Trent Mick <trentm@gmail.com> (http://trentm.com)",
+  "bin": {
+    "nodedoc": "./bin/nodedoc.py",
+  },
+  "keywords": ["doc", "docs", "documentation", "perldoc"]
+}
