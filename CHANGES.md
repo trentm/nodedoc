@@ -2,7 +2,9 @@
 
 ## 1.0.2 (not yet released)
 
-(nothing yet)
+- Use "less -R" if no PAGER is set to not get this warning from less:
+
+        ".../fs.nodedoc" may be a binary file.  See it anyway?
 
 
 ## 1.0.1

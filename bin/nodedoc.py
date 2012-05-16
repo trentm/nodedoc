@@ -215,7 +215,7 @@ def nodedoc(section):
     if not exists(nodedoc_path) or mtime(nodedoc_path) < mtime(html_path):
         generate_nodedoc_path(html_path, nodedoc_path)
 
-    pager = os.environ.get("PAGER", "less")
+    pager = os.environ.get("PAGER", "less -R")
     cmd = '%s "%s"' % (pager, nodedoc_path)
     return os.system(cmd)
 
