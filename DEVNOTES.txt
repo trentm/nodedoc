@@ -1,3 +1,0 @@
-# dev notes
-
-    less '+10G' configure   # how to call `less` to jump to particular line
