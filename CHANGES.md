@@ -1,5 +1,10 @@
 # nodedoc Changelog
 
+## 1.1.1 (not yet released)
+
+(nothing yet)
+
+
 ## 1.1.0
 
 - Add support for searching the node.js doc headers for API method matches,
