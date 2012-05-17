@@ -37,6 +37,22 @@ List all nodedoc sections:
 
 # TODO
 
+- nodedoc -f func   # e.g. `nodedoc -f fs.close`
+  Feeling this out:
+
+    nodedoc fs    # fs page
+    nodedoc fs.chown   # search headers
+    nodedoc chown   # search headers
+    nodedoc -a chown   # explicit "-a|--api"
+    nodedoc -A fs.chown  # explicit and must be a full match
+
+   Search all h2 and h3. How to exclude non-API h2's and h3's? Explicit
+   header_excludes list.
+
+   If search hit is unique for full match (e.g. fs.chown also matches
+   fs.chownSync) then just show it. Else show a list of hits. Explicit
+   option for these (-A).
+
 - Some way to not have to re-release nodedoc for a new node release. Perhaps
   support multiple versions of the node docs and perhaps have a `nodedoc
   --update` to pull in recent release docs.

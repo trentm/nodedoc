@@ -307,7 +307,9 @@ if __name__ == "__main__":
             if isinstance(exc, IOError) and exc.args[0] == 32:
                 # Skip 'IOError: [Errno 32] Broken pipe': often a cancelling of `less`.
                 skip_it = True
-            if not skip_it:
+            if isinstance(exc, Error):
+                log.error(exc_info[1])
+            elif not skip_it:
                 tb_path, tb_lineno, tb_func = traceback.extract_tb(tb)[-1][:3]
                 log.error("%s (%s:%s in %s)", exc_info[1], tb_path,
                     tb_lineno, tb_func)
