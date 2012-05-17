@@ -1,8 +1,9 @@
 # nodedoc Changelog
 
-## 1.0.4 (not yet released)
+## 1.1.0 (not yet released)
 
-(nothing yet)
+- Add support for searching the node.js doc headers for API method matches,
+  e.g. `nodedoc fstat`, `nodedoc spawn`. See the README for more info.
 
 
 ## 1.0.3

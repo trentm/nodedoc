@@ -4,23 +4,27 @@
 """nodedoc -- fledgling perldoc for node.js
 
 Usage:
-    nodedoc SECTION
+    nodedoc SECTION         # view a node.js doc section
+    nodedoc TERM            # search for matching API methods
+    nodedoc SECTION TERM    # search API methods in that section
 
 See <https://github.com/trentm/nodedoc> for more info.
 """
 
-__version_info__ = (1, 0, 4)
+__version_info__ = (1, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 import re
 import sys
 import textwrap
 import os
-from os.path import dirname, abspath, join, exists
+from os.path import dirname, abspath, join, exists, splitext, basename
 import logging
 import codecs
 import optparse
+import bisect
 from glob import glob
+from pprint import pprint
 
 TOP = dirname(dirname(abspath(__file__)))
 if not exists(join(TOP, "tools", "cutarelease.py")):  # installed layout
@@ -207,12 +211,11 @@ def generate_nodedoc_path(html_path, nodedoc_path):
 
     codecs.open(nodedoc_path, 'w', 'utf-8').write(content)
 
-
-def nodedoc(section):
-    markdown_path = join(TOP, "doc", "api", section + ".markdown")
+def ensure_nodedoc_built(markdown_path):
     if not exists(markdown_path):
-        raise Error("no such section: '%s'" % section)
+        raise OSError("markdown path does not exist: '%s'" % markdown_path)
 
+    section = splitext(basename(markdown_path))[0]
     html_path = join(CACHE_DIR, section + ".html")
     if not exists(html_path) or mtime(html_path) < mtime(markdown_path):
         generate_html_path(markdown_path, html_path)
@@ -221,14 +224,130 @@ def nodedoc(section):
     if not exists(nodedoc_path) or mtime(nodedoc_path) < mtime(html_path):
         generate_nodedoc_path(html_path, nodedoc_path)
 
+    return nodedoc_path
+
+def ensure_nodedocs_built():
+    """Ensure all .nodedoc files are built."""
+    for markdown_path in glob(join(TOP, "doc", "api", "*.markdown")):
+        ensure_nodedoc_built(markdown_path)
+
+def calc_line_start_positions(text):
+    line_start_positions = []
+    lines = text.splitlines(True)
+    pos = 0
+    for line in lines:
+        line_start_positions.append(pos)
+        pos += len(line)
+    return line_start_positions
+
+
+def grep_file(regex, path):
+    text = codecs.open(path, 'r', 'utf-8').read()
+    line_start_positions = None  # lazily built
+    for match in regex.finditer(text):
+        if line_start_positions is None:
+            line_start_positions = calc_line_start_positions(text)
+        start = match.start()
+        hit = {
+            "path": path,
+            "header": match.group("h").strip(),
+            "start": start,
+            "end": match.end(),
+            "line": bisect.bisect_left(line_start_positions, start) + 1
+        }
+        yield hit
+
+def grep_nodedoc_headers(term, nodedoc_paths=None):
+    """Generate hits of the given term in the headers of the given
+    nodedoc paths. If no paths are given, search all of them.
+    """
+    regex = re.compile(r"""
+        ^
+        (\033\[\d+m)*       # leading ansi escapes
+        \#{2,3}             # #'s for h2 or h3
+        (?P<h>.*?%s.*?)     # the header text
+        (\033\[\d+m)*       # trailing ansi escapes
+        $""" % re.escape(term), re.X | re.I | re.M)
+    tail = "-%s.nodedoc" % __version__
+    if nodedoc_paths is None:
+        nodedoc_paths = glob(join(CACHE_DIR, "*" + tail))
+    for nodedoc_path in nodedoc_paths:
+        for hit in grep_file(regex, nodedoc_path):
+            hit["section"] = basename(nodedoc_path[:-len(tail)])
+            yield hit
+
+def nodedoc(section, term=None, opts=None):
+    if term is None:
+        # `nodedoc SECTION`
+        markdown_path = join(TOP, "doc", "api", section + ".markdown")
+        if exists(markdown_path):
+            return nodedoc_section(section)
+
+    if term is not None:
+        # `nodedoc SECTION TERM`
+        markdown_path = join(TOP, "doc", "api", section + ".markdown")
+        if not exists(markdown_path):
+            raise Error("no such section: '%s'" % section)
+        nodedoc_path = ensure_nodedoc_built(markdown_path)
+        hits = list(grep_nodedoc_headers(term, [nodedoc_path]))
+    else:
+        # `nodedoc TERM`
+        term = section
+        ensure_nodedocs_built()
+        hits = list(grep_nodedoc_headers(term))
+
+    if len(hits) == 0:
+        raise Error("no such section or API method match: '%s'" % section)
+    elif len(hits) == 1 and not opts.list:
+        return page_nodedoc(hits[0]["path"], hits[0]["line"])
+    else:
+        exact_hits = []
+        if not opts.list:
+            # See if this is an "exact" match. If so, and is the only such
+            # match, then page it instead of a list of all matches.
+            # Re "exact": Take this example:
+            #       ## fs.chown(path, uid, gid, [callback])
+            # Here "fs.chown" or "chown" would be exact matches. Harder
+            # example:
+            #       ## assert(value, message), assert.ok(value, [message])
+            # Here "ok" is an exact match. Note that "value" and "message"
+            # are not exact matches: we care about function names, not args.
+            arg_stripper = re.compile("\(.*?\)")
+            for hit in hits:
+                stripped = arg_stripper.sub("", hit["header"])
+                if re.search(r'\b%s\b' % re.escape(term), stripped):
+                    exact_hits.append(hit)
+                    hit["exact"] = True
+            #pprint(exact_hits)
+
+        if len(exact_hits) == 1:
+            return page_nodedoc(exact_hits[0]["path"], exact_hits[0]["line"])
+        else:
+            print "SECTION          API"
+            for hit in hits:
+                print "%(section)-15s  %(header)s" % hit
+
+def page_nodedoc(path, line=None):
     pager = os.environ.get("PAGER", "less -R")
-    cmd = '%s "%s"' % (pager, nodedoc_path)
+    if line:
+        cmd = '%s "+%dG" "%s"' % (pager, line, path)
+    else:
+        cmd = '%s "%s"' % (pager, path)
     return os.system(cmd)
+
+def nodedoc_section(section):
+    markdown_path = join(TOP, "doc", "api", section + ".markdown")
+    if not exists(markdown_path):
+        raise Error("no such section: '%s'" % section)
+    nodedoc_path = ensure_nodedoc_built(markdown_path)
+    return page_nodedoc(nodedoc_path)
 
 def nodedoc_sections():
     markdown_paths = glob(join(TOP, "doc", "api", "*.markdown"))
     for p in markdown_paths:
-        yield os.path.splitext(os.path.basename(p))[0]
+        first_line = codecs.open(p, 'r', 'utf-8').read(1024).split('\n', 1)[0]
+        desc = first_line.lstrip(' #')
+        yield {"name": splitext(basename(p))[0], "desc": desc}
 
 
 
@@ -273,19 +392,19 @@ def main(argv=sys.argv):
         action="store_const", const=logging.WARNING,
         help="quieter output (just warnings and errors)")
     parser.add_option("-l", "--list", action="store_true",
-        help="list all nodedoc sections")
+        help="list all nodedoc sections or API hits (if args given)")
     parser.set_defaults(log_level=logging.INFO)
-    opts, sections = parser.parse_args()
+    opts, args = parser.parse_args()
     log.setLevel(opts.log_level)
 
-    if opts.list:
-        print '\n'.join(nodedoc_sections())
-    elif len(sections) == 0:
+    if not args and opts.list:
+        print "SECTION          DESCRIPTION"
+        for section in nodedoc_sections():
+            print "%(name)-15s  %(desc)s" % section
+    elif len(args) not in (1, 2):
         parser.print_help()
-    elif len(sections) > 1:
-        log.error("too many arguments: %s", ' '.join(sections))
     else:
-        return nodedoc(sections[0])
+        return nodedoc(*args, opts=opts)
 
 
 ## {{{ http://code.activestate.com/recipes/577258/ (r4)

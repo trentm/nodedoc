@@ -16,48 +16,77 @@ You should now have "nodedoc" on your PATH:
     $ nodedoc --version
     nodedoc 1.0.0
 
+
 # Status
 
-This really is a quick hack. There are a number of limitations in the current
-Markdown -> HTML -> ANSI escape-colored text. Among them:
+I think this is currently pretty useful. However, it is a quick hack
+(Markdown -> HTML -> ANSI escape-colored text, regex for parsing) so
+there are some less-than-rigorous limitations. Among them:
 
 - nested lists aren't handled properly
 - `<ol>` aren't handled properly
 
 The current version of the node.js docs is a snapshot of the
-<https://github.com/joyent/node> master.
+<https://github.com/joyent/node> master from 17-May-2012.
 
 
-# Examples
-
-This will render and color the fs.markdown core docs and page through them
-(using your `PAGER` environment setting, if any):
-
-    $ nodedoc fs
+# Usage Examples
 
 List all nodedoc sections:
 
     $ nodedoc -l
+    SECTION          DESCRIPTION
+    addons           Addons
+    appendix_1       Appendix 1 - Third Party Modules
+    assert           Assert
+    buffer           Buffer
+    child_process    Child Process
+    ...
+
+This will render and color the "fs.markdown" core document and page through
+it (using your `PAGER` environment setting, if any, else `less -R`):
+
+    $ nodedoc fs
+    ... open 'fs' section in PAGER ...
+
+If the given argument is not a section name, it will search all doc headers
+(in the node.js docs the headers are typically API names). Here we use '-l'
+to explicitly request a list of hits:
+
+    $ nodedoc -l stat
+    SECTION          API
+    fs               fs.stat(path, [callback])
+    fs               fs.lstat(path, [callback])
+    fs               fs.fstat(fd, [callback])
+    fs               fs.statSync(path)
+    fs               fs.lstatSync(path)
+    fs               fs.fstatSync(fd)
+    fs               Class: fs.Stats
+    http             response.writeHead(statusCode, [reasonPhrase], [headers])
+    http             response.statusCode
+    http             response.statusCode
+
+You can limit the search to a specific section:
+
+    $ nodedoc -l http stat
+    http             response.writeHead(statusCode, [reasonPhrase], [headers])
+    http             response.statusCode
+    http             response.statusCode
+
+If there is a single "exact" match (e.g. here "stat" matches the "fs.stat"
+method), then it will automatically open that document to the appropriate
+line:
+
+    $ nodedoc stat
+    ... open 'fs.stat' section in PAGER ...
+    $ nodedoc spawn
+    ... open 'child_process.spawn' section in PAGER ...
+
 
 
 # TODO
 
-- nodedoc -f func   # e.g. `nodedoc -f fs.close`
-  Feeling this out:
-
-    nodedoc fs    # fs page
-    nodedoc fs.chown   # search headers
-    nodedoc chown   # search headers
-    nodedoc -a chown   # explicit "-a|--api"
-    nodedoc -A fs.chown  # explicit and must be a full match
-
-   Search all h2 and h3. How to exclude non-API h2's and h3's? Explicit
-   header_excludes list.
-
-   If search hit is unique for full match (e.g. fs.chown also matches
-   fs.chownSync) then just show it. Else show a list of hits. Explicit
-   option for these (-A).
-
 - Some way to not have to re-release nodedoc for a new node release. Perhaps
   support multiple versions of the node docs and perhaps have a `nodedoc
   --update` to pull in recent release docs.
+  (Drop files: index.markdown, _toc.markdown,  all.markdown)
