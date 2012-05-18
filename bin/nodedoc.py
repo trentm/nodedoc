@@ -18,7 +18,7 @@ import re
 import sys
 import textwrap
 import os
-from os.path import dirname, abspath, join, exists, splitext, basename
+from os.path import dirname, join, exists, splitext, basename, realpath
 import logging
 import codecs
 import optparse
@@ -26,9 +26,7 @@ import bisect
 from glob import glob
 from pprint import pprint
 
-TOP = dirname(dirname(abspath(__file__)))
-if not exists(join(TOP, "tools", "cutarelease.py")):  # installed layout
-    TOP = join(TOP, "lib", "node_modules", "nodedoc")
+TOP = dirname(dirname(realpath(__file__)))
 sys.path.insert(0, join(TOP, "deps"))
 import markdown2
 import appdirs
