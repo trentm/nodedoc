@@ -1,6 +1,6 @@
 # nodedoc Changelog
 
-## 1.1.1 (not yet released)
+## 1.1.1
 
 - [issue #1] Use realpath to find deps and doc files relative to nodedoc
   script.
