@@ -1,5 +1,10 @@
 # nodedoc Changelog
 
+## 1.1.3 (not yet released)
+
+(nothing yet)
+
+
 ## 1.1.2
 
 - Pipe the less (PAGER) to avoid the inclusion of the .nodedoc internal detail
