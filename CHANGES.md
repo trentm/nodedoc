@@ -1,6 +1,6 @@
 # nodedoc Changelog
 
-## 1.1.2 (not yet released)
+## 1.1.2
 
 - Pipe the less (PAGER) to avoid the inclusion of the .nodedoc internal detail
   file in the less session.
