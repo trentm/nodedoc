@@ -326,11 +326,12 @@ def nodedoc(section, term=None, opts=None):
                 print "%(section)-15s  %(header)s" % hit
 
 def page_nodedoc(path, line=None):
+    # TODO: Windows
     pager = os.environ.get("PAGER", "less -R")
     if line:
-        cmd = '%s "+%dG" "%s"' % (pager, line, path)
+        cmd = 'cat "%s" 2>/dev/null | %s "+%dG"' % (path, pager, line)
     else:
-        cmd = '%s "%s"' % (pager, path)
+        cmd = 'cat "%s" 2>/dev/null | %s' % (path, pager)
     return os.system(cmd)
 
 def nodedoc_section(section):
