@@ -1,5 +1,7 @@
 A fledgling `perldoc` for node.js.
 
+![nodedoc screenshot](https://raw.github.com/trentm/nodedoc/master/tools/screenshot.png)
+
 To be clear, by "perldoc for node.js" I'm talking about **a tool to view
 node.js docs on the command-line**. I am **not** suggesting POD (embedded or
 otherwise) or other similar doc format for node.js code.

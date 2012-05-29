@@ -2,7 +2,8 @@
 
 ## 1.1.2 (not yet released)
 
-(nothing yet)
+- Pipe the less (PAGER) to avoid the inclusion of the .nodedoc internal detail
+  file in the less session.
 
 
 ## 1.1.1
