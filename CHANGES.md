@@ -1,6 +1,6 @@
 # nodedoc Changelog
 
-## 1.2.0 (not yet released)
+## 1.2.0
 
 - Update to node v0.6.20 and v0.8.5 docs. By default is shows v0.8 docs.
   Use `nodedoc -6 ...` to view the v0.6 docs. Also added '-8' switch to
