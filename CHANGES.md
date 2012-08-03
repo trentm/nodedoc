@@ -1,5 +1,10 @@
 # nodedoc Changelog
 
+## 1.2.1 (not yet released)
+
+(nothing yet)
+
+
 ## 1.2.0
 
 - Update to node v0.6.20 and v0.8.5 docs. By default is shows v0.8 docs.
