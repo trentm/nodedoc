@@ -11,8 +11,9 @@ Usage:
 See <https://github.com/trentm/nodedoc> for more info.
 """
 
-__version_info__ = (1, 1, 3)
+__version_info__ = (1, 2, 0)
 __version__ = '.'.join(map(str, __version_info__))
+__node_versions__ = list(sorted([(0,6,20), (0,8,5)]))
 
 import re
 import sys
@@ -37,6 +38,9 @@ import appdirs
 
 log = logging.getLogger("nodedoc")
 CACHE_DIR = appdirs.user_cache_dir("nodedoc", "trentm")
+
+# Default node version of docs: just the minor ver number (as a string).
+DEFAULT_V = str(sorted(__node_versions__)[-1][1])
 
 
 
@@ -224,9 +228,12 @@ def ensure_nodedoc_built(markdown_path):
 
     return nodedoc_path
 
-def ensure_nodedocs_built():
-    """Ensure all .nodedoc files are built."""
-    for markdown_path in glob(join(TOP, "doc", "api", "*.markdown")):
+def ensure_nodedocs_built(v=DEFAULT_V):
+    """Ensure all .nodedoc files are built.
+
+    @param v {str} Is the node version of the docs to build. This is just
+        the single minor number digit, e.g. "8"."""
+    for markdown_path in glob(join(TOP, "doc", "api"+v, "*.markdown")):
         ensure_nodedoc_built(markdown_path)
 
 def calc_line_start_positions(text):
@@ -274,16 +281,16 @@ def grep_nodedoc_headers(term, nodedoc_paths=None):
             hit["section"] = basename(nodedoc_path[:-len(tail)])
             yield hit
 
-def nodedoc(section, term=None, opts=None):
+def nodedoc(section, term=None, opts=None, v=DEFAULT_V):
     if term is None:
         # `nodedoc SECTION`
-        markdown_path = join(TOP, "doc", "api", section + ".markdown")
+        markdown_path = join(TOP, "doc", "api"+v, section + ".markdown")
         if exists(markdown_path):
-            return nodedoc_section(section)
+            return nodedoc_section(section, v=v)
 
     if term is not None:
         # `nodedoc SECTION TERM`
-        markdown_path = join(TOP, "doc", "api", section + ".markdown")
+        markdown_path = join(TOP, "doc", "api"+v, section + ".markdown")
         if not exists(markdown_path):
             raise Error("no such section: '%s'" % section)
         nodedoc_path = ensure_nodedoc_built(markdown_path)
@@ -291,7 +298,7 @@ def nodedoc(section, term=None, opts=None):
     else:
         # `nodedoc TERM`
         term = section
-        ensure_nodedocs_built()
+        ensure_nodedocs_built(v=v)
         hits = list(grep_nodedoc_headers(term))
 
     if len(hits) == 0:
@@ -334,15 +341,15 @@ def page_nodedoc(path, line=None):
         cmd = 'cat "%s" 2>/dev/null | %s' % (path, pager)
     return os.system(cmd)
 
-def nodedoc_section(section):
-    markdown_path = join(TOP, "doc", "api", section + ".markdown")
+def nodedoc_section(section, v=DEFAULT_V):
+    markdown_path = join(TOP, "doc", "api"+v, section + ".markdown")
     if not exists(markdown_path):
         raise Error("no such section: '%s'" % section)
     nodedoc_path = ensure_nodedoc_built(markdown_path)
     return page_nodedoc(nodedoc_path)
 
-def nodedoc_sections():
-    markdown_paths = glob(join(TOP, "doc", "api", "*.markdown"))
+def nodedoc_sections(v=DEFAULT_V):
+    markdown_paths = glob(join(TOP, "doc", "api"+v, "*.markdown"))
     for p in markdown_paths:
         first_line = codecs.open(p, 'r', 'utf-8').read(1024).split('\n', 1)[0]
         desc = first_line.lstrip(' #')
@@ -392,18 +399,25 @@ def main(argv=sys.argv):
         help="quieter output (just warnings and errors)")
     parser.add_option("-l", "--list", action="store_true",
         help="list all nodedoc sections or API hits (if args given)")
-    parser.set_defaults(log_level=logging.INFO)
+    v6 = ".".join(map(str, __node_versions__[0]))
+    v8 = ".".join(map(str, __node_versions__[1]))
+    vD = ".".join(map(str, __node_versions__[-1]))
+    parser.add_option("-6", action="store_const", dest="v", const="6",
+        help="use %s docs (default is %s)" % (v6, vD))
+    parser.add_option("-8", action="store_const", dest="v", const="8",
+        help="use %s docs (default is %s)" % (v8, vD))
+    parser.set_defaults(log_level=logging.INFO, v=DEFAULT_V)
     opts, args = parser.parse_args()
     log.setLevel(opts.log_level)
 
     if not args and opts.list:
         print "SECTION          DESCRIPTION"
-        for section in nodedoc_sections():
+        for section in nodedoc_sections(v=opts.v):
             print "%(name)-15s  %(desc)s" % section
     elif len(args) not in (1, 2):
         parser.print_help()
     else:
-        return nodedoc(*args, opts=opts)
+        return nodedoc(*args, opts=opts, v=opts.v)
 
 
 ## {{{ http://code.activestate.com/recipes/577258/ (r4)
