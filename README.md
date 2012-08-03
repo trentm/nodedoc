@@ -28,8 +28,6 @@ there are some less-than-rigorous limitations. Among them:
 - nested lists aren't handled properly
 - `<ol>` aren't handled properly
 
-The current version of the node.js docs is a snapshot of the
-<https://github.com/joyent/node> master from 17-May-2012.
 
 
 # Usage Examples
