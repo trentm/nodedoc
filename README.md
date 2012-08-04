@@ -88,7 +88,3 @@ line:
 
 - Find the terminal height in lines and if the *list* output will exceed that
   then page (a la git output).
-- Some way to not have to re-release nodedoc for a new node release. Perhaps
-  support multiple versions of the node docs and perhaps have a `nodedoc
-  --update` to pull in recent release docs.
-  (Drop files: index.markdown, _toc.markdown,  all.markdown)
