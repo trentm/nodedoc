@@ -1,5 +1,10 @@
 # nodedoc Changelog
 
+## 1.2.2 (not yet released)
+
+(nothing yet)
+
+
 ## 1.2.1
 
 - Drop some cruft files from the updated docs (e.g. all.markdown).
