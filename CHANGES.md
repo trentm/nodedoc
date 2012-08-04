@@ -2,7 +2,7 @@
 
 ## 1.2.1 (not yet released)
 
-(nothing yet)
+- Drop some cruft files from the updated docs (e.g. all.markdown).
 
 
 ## 1.2.0
