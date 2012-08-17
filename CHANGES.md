@@ -1,5 +1,10 @@
 # nodedoc Changelog
 
+## 1.2.3 (not yet released)
+
+(nothing yet)
+
+
 ## 1.2.2
 
 - <h4>
