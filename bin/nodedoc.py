@@ -117,6 +117,12 @@ def h3(match):
     text = '\n' + bold(red('### ' + text))
     return text
 
+def h4(match):
+    """bold red"""
+    text = match.group(1)
+    text = '\n' + bold(red('#### ' + text))
+    return text
+
 def a(match):
     """blue"""
     text = match.group(1)
@@ -196,6 +202,7 @@ def generate_nodedoc_path(html_path, nodedoc_path):
     content = re.compile('<h1>(.*?)</h1>', re.S).sub(h1, content)
     content = re.compile('<h2>(.*?)</h2>', re.S).sub(h2, content)
     content = re.compile('<h3>(.*?)</h3>', re.S).sub(h3, content)
+    content = re.compile('<h4>(.*?)</h4>', re.S).sub(h4, content)
 
     #TODO:XXX special case two adjacent h2's, e.g.:
     #
