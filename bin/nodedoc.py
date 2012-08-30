@@ -11,7 +11,7 @@ Usage:
 See <https://github.com/trentm/nodedoc> for more info.
 """
 
-__version_info__ = (1, 2, 4)
+__version_info__ = (1, 2, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
 import re
