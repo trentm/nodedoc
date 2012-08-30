@@ -1,5 +1,10 @@
 # nodedoc Changelog
 
+## 1.2.4 (not yet released)
+
+(nothing yet)
+
+
 ## 1.2.3
 
 - Update docs to v0.8.8.
