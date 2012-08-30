@@ -1,6 +1,6 @@
 # nodedoc Changelog
 
-## 1.2.4 (not yet released)
+## 1.2.4
 
 - Add 'doc/versions' to make `nodedoc -h` list the current versions
   accurately.
