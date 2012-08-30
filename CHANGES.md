@@ -2,7 +2,8 @@
 
 ## 1.2.4 (not yet released)
 
-(nothing yet)
+- Add 'doc/versions' to make `nodedoc -h` list the current versions
+  accurately.
 
 
 ## 1.2.3

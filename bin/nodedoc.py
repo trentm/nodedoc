@@ -13,7 +13,6 @@ See <https://github.com/trentm/nodedoc> for more info.
 
 __version_info__ = (1, 2, 4)
 __version__ = '.'.join(map(str, __version_info__))
-__node_versions__ = list(sorted([(0,6,20), (0,8,5)]))
 
 import re
 import sys
@@ -39,8 +38,26 @@ import appdirs
 log = logging.getLogger("nodedoc")
 CACHE_DIR = appdirs.user_cache_dir("nodedoc", "trentm")
 
+def _get_doc_versions():
+    import re
+    versions = []
+    v_pat = re.compile("^v(\d+)\.(\d+)\.(\d+)$")
+    versions_path = join(TOP, "doc", "versions")
+    f = open(versions_path, 'r')
+    try:
+        for line in f:
+            if not line.strip():
+                continue
+            versions.append(
+                tuple(int(s) for s in v_pat.search(line).groups()))
+    finally:
+        f.close()
+    versions.sort()
+    return versions
+DOC_VERSIONS = _get_doc_versions()
+
 # Default node version of docs: just the minor ver number (as a string).
-DEFAULT_V = str(sorted(__node_versions__)[-1][1])
+DEFAULT_V = str(sorted(DOC_VERSIONS)[-1][1])
 
 
 
@@ -406,9 +423,9 @@ def main(argv=sys.argv):
         help="quieter output (just warnings and errors)")
     parser.add_option("-l", "--list", action="store_true",
         help="list all nodedoc sections or API hits (if args given)")
-    v6 = ".".join(map(str, __node_versions__[0]))
-    v8 = ".".join(map(str, __node_versions__[1]))
-    vD = ".".join(map(str, __node_versions__[-1]))
+    v6 = ".".join(map(str, DOC_VERSIONS[0]))
+    v8 = ".".join(map(str, DOC_VERSIONS[1]))
+    vD = ".".join(map(str, DOC_VERSIONS[-1]))
     parser.add_option("-6", action="store_const", dest="v", const="6",
         help="use %s docs (default is %s)" % (v6, vD))
     parser.add_option("-8", action="store_const", dest="v", const="8",
