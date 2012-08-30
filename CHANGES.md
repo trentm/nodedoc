@@ -2,7 +2,7 @@
 
 ## 1.2.3 (not yet released)
 
-(nothing yet)
+- Update docs to v0.8.8.
 
 
 ## 1.2.2

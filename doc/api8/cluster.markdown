@@ -222,8 +222,8 @@ call `.setupMaster()` with no arguments.
   * `silent` {Boolean} whether or not to send output to parent's stdio.
     (Default=`false`)
 
-The `setupMaster` is used to change the default 'fork' behavior. It takes
-one option object argument.
+`setupMaster` is used to change the default 'fork' behavior. The new settings
+are effective immediately and permanently, they cannot be changed later on.
 
 Example:
 
@@ -256,8 +256,8 @@ The method takes an optional callback argument which will be called when finishe
 
 * {Object}
 
-In the cluster all living worker objects are stored in this object by there
-`id` as the key. This makes it easy to loop through all living workers.
+A hash that stores the active worker objects, keyed by `id` field. Makes it
+easy to loop through all the workers.
 
     // Go through all workers
     function eachWorker(callback) {
@@ -361,7 +361,7 @@ server. An alternative wound be to execute `worker.destroy()` after 2 seconds, b
 that would normally not allow the worker to do any cleanup if needed.
 
     if (cluster.isMaster) {
-      var worker = cluser.fork();
+      var worker = cluster.fork();
       var timeout;
 
       worker.on('listening', function(address) {
