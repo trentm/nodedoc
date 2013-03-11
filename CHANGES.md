@@ -1,5 +1,10 @@
 # nodedoc Changelog
 
+## 1.3.1 (not yet released)
+
+- Fix `nodedoc --version` to report the correct version.
+
+
 ## 1.3.0
 
 - Added v0.10 docs (new default).
@@ -73,4 +78,3 @@
 ## 1.0.0
 
 First release.
-
