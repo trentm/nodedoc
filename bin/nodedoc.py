@@ -423,13 +423,13 @@ def main(argv=sys.argv):
         help="quieter output (just warnings and errors)")
     parser.add_option("-l", "--list", action="store_true",
         help="list all nodedoc sections or API hits (if args given)")
-    v6 = ".".join(map(str, DOC_VERSIONS[0]))
-    v8 = ".".join(map(str, DOC_VERSIONS[1]))
+    v8 = ".".join(map(str, DOC_VERSIONS[0]))
+    v10 = ".".join(map(str, DOC_VERSIONS[1]))
     vD = ".".join(map(str, DOC_VERSIONS[-1]))
-    parser.add_option("-6", action="store_const", dest="v", const="6",
-        help="use %s docs (default is %s)" % (v6, vD))
     parser.add_option("-8", action="store_const", dest="v", const="8",
         help="use %s docs (default is %s)" % (v8, vD))
+    parser.add_option("-1", action="store_const", dest="v", const="10",
+        help="use %s docs (default is %s)" % (v10, vD))
     parser.set_defaults(log_level=logging.INFO, v=DEFAULT_V)
     opts, args = parser.parse_args()
     log.setLevel(opts.log_level)

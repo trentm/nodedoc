@@ -2,7 +2,9 @@
 
 ## 1.2.5 (not yet released)
 
-(nothing yet)
+- Added v0.10 docs (new default).
+- Updated docs to v0.8.22.
+- Dropped 0.6 docs.
 
 
 ## 1.2.4

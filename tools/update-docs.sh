@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Update the node docs under docs/
+# Update the node docs under doc/
 #
 
 if [[ -n "$TRACE" ]]; then
@@ -43,57 +43,51 @@ else
 fi
 
 
-# v0.6
-micro_ver6=$(cd $node_dir && git tag -l | grep '^v0\.6' \
-    | cut -d. -f3 | sort -n | tail -1)
-ver6=v0.6.$micro_ver6
-(cd $node_dir && git checkout $ver6)
-cp -r $node_dir/doc/api/* doc/api6/
-rm doc/api6/index.markdown doc/api6/_toc.markdown doc/api6/all.markdown
-git add doc/api6
-
 # v0.8
 micro_ver8=$(cd $node_dir && git tag -l | grep '^v0\.8' \
     | cut -d. -f3 | sort -n | tail -1)
 ver8=v0.8.$micro_ver8
 (cd $node_dir && git checkout $ver8)
 cp -r $node_dir/doc/api/* doc/api8/
+mkdir -p doc/api8/
 rm doc/api8/index.markdown doc/api8/_toc.markdown doc/api8/all.markdown
 git add doc/api8
+
+# v0.10
+micro_ver10=$(cd $node_dir && git tag -l | grep '^v0\.10' \
+    | cut -d. -f3 | sort -n | tail -1)
+ver10=v0.10.$micro_ver10
+(cd $node_dir && git checkout $ver10)
+mkdir -p doc/api10/
+cp -r $node_dir/doc/api/* doc/api10/
+rm doc/api10/index.markdown doc/api10/_toc.markdown doc/api10/all.markdown
+git add doc/api10
 
 # reset
 (cd $node_dir && git checkout master)
 
 
-updates6=$(git status --porcelain doc/api6)
 updates8=$(git status --porcelain doc/api8)
+updates10=$(git status --porcelain doc/api10)
 
-if [[ -n "$updates6" || -n "$updates8" ]]; then
-    echo $ver6 >doc/versions
-    echo $ver8 >>doc/versions
+if [[ -n "$updates8" || -n "$updates10" ]]; then
+    echo $ver8 >doc/versions
+    echo $ver10 >>doc/versions
 fi
 
 echo ""
 echo '* * *'
-if [[ -z "$updates6" && -z "$updates8" ]]; then
+if [[ -z "$updates8" && -z "$updates10" ]]; then
     echo "no updates"
-elif [[ -n "$updates6" && -n "$updates8" ]]; then
+elif [[ -n "$updates8" && -n "$updates10" ]]; then
     echo "Suggested CHANGES.md addition:"
     echo ""
-    echo "    - Update docs to $ver6, $ver8."
+    echo "    - Update docs to $ver8, $ver10."
     echo ""
     echo "Suggested commit:"
     echo ""
-    echo "    git commit CHANGES.md doc -m 'update docs to $ver6, $ver8'"
-elif [[ -n "$updates6" && -z "$updates8" ]]; then
-    echo "Suggested CHANGES.md addition:"
-    echo ""
-    echo "    - Update docs to $ver6."
-    echo ""
-    echo "Suggested commit:"
-    echo ""
-    echo "    git commit CHANGES.md doc -m 'update docs to $ver6'"
-elif [[ -z "$updates6" && -n "$updates8" ]]; then
+    echo "    git commit CHANGES.md doc -m 'update docs to $ver8, $ver10'"
+elif [[ -n "$updates8" && -z "$updates10" ]]; then
     echo "Suggested CHANGES.md addition:"
     echo ""
     echo "    - Update docs to $ver8."
@@ -101,4 +95,12 @@ elif [[ -z "$updates6" && -n "$updates8" ]]; then
     echo "Suggested commit:"
     echo ""
     echo "    git commit CHANGES.md doc -m 'update docs to $ver8'"
+elif [[ -z "$updates8" && -n "$updates10" ]]; then
+    echo "Suggested CHANGES.md addition:"
+    echo ""
+    echo "    - Update docs to $ver10."
+    echo ""
+    echo "Suggested commit:"
+    echo ""
+    echo "    git commit CHANGES.md doc -m 'update docs to $ver10'"
 fi
