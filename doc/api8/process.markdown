@@ -355,7 +355,7 @@ What processor architecture you're running on: `'arm'`, `'ia32'`, or `'x64'`.
 ## process.platform
 
 What platform you're running on:
-`'darwin'`, `'freebsd'`, `'linux'`, `'solaris'` or `'win32'`
+`'darwin'`, `'freebsd'`, `'linux'`, `'sunos'` or `'win32'`
 
     console.log('This platform is ' + process.platform);
 
@@ -417,15 +417,15 @@ primary use is for measuring performance between intervals.
 You may pass in the result of a previous call to `process.hrtime()` to get
 a diff reading, useful for benchmarks and measuring intervals:
 
-    var t = process.hrtime();
-    // [ 1800216, 927643717 ]
+    var time = process.hrtime();
+    // [ 1800216, 25 ]
 
     setTimeout(function () {
-      t = process.hrtime(t);
-      // [ 1, 6962306 ]
+      var diff = process.hrtime(time);
+      // [ 1, 552 ]
 
-      console.log('benchmark took %d seconds and %d nanoseconds', t[0], t[1]);
-      // benchmark took 1 seconds and 6962306 nanoseconds
+      console.log('benchmark took %d nanoseconds', diff[0] * 1e9 + diff[1]);
+      // benchmark took 1000000527 nanoseconds
     }, 1000);
 
 [EventEmitter]: events.html#events_class_events_eventemitter

@@ -69,7 +69,7 @@ This causes potentially surprising behavior in three edge cases:
    the worker to use the supplied handle, rather than talk to the master
    process.  If the worker already has the handle, then it's presumed
    that you know what you are doing.
-3. `server.listen(0)` Normally, this will case servers to listen on a
+3. `server.listen(0)` Normally, this will cause servers to listen on a
    random port.  However, in a cluster, each worker will receive the
    same "random" port each time they do `listen(0)`.  In essence, the
    port is random the first time, but predictable thereafter.  If you
@@ -100,7 +100,7 @@ the worker pool for your application's needs.
     (Default=`false`)
 
 All settings set by the `.setupMaster` is stored in this settings object.
-This object is not supposed to be change or set manually, by you.
+This object is not supposed to be changed or set manually, by you.
 
 ## cluster.isMaster
 
@@ -252,12 +252,29 @@ die graceful if no other event is waiting.
 
 The method takes an optional callback argument which will be called when finished.
 
+## cluster.worker
+
+* {Object}
+
+A reference to the current worker object. Not available in the master process.
+
+    var cluster = require('cluster');
+
+    if (cluster.isMaster) {
+      console.log('I am master');
+      cluster.fork();
+      cluster.fork();
+    } else if (cluster.isWorker) {
+      console.log('I am worker #' + cluster.worker.id);
+    }
+
 ## cluster.workers
 
 * {Object}
 
 A hash that stores the active worker objects, keyed by `id` field. Makes it
-easy to loop through all the workers.
+easy to loop through all the workers. It is only available in the master
+process.
 
     // Go through all workers
     function eachWorker(callback) {
@@ -357,7 +374,7 @@ the worker finally die.
 
 Because there might be long living connections, it is useful to implement a timeout.
 This example ask the worker to disconnect and after 2 seconds it will destroy the
-server. An alternative wound be to execute `worker.destroy()` after 2 seconds, but
+server. An alternative would be to execute `worker.destroy()` after 2 seconds, but
 that would normally not allow the worker to do any cleanup if needed.
 
     if (cluster.isMaster) {

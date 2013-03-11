@@ -6,7 +6,9 @@ Node provides a tri-directional `popen(3)` facility through the
 `child_process` module.
 
 It is possible to stream data through a child's `stdin`, `stdout`, and
-`stderr` in a fully non-blocking way.
+`stderr` in a fully non-blocking way.  (Note that some programs use
+line-buffered I/O internally.  That doesn't affect node.js but it means
+data you send to the child process is not immediately consumed.)
 
 To create a child process use `require('child_process').spawn()` or
 `require('child_process').fork()`.  The semantics of each are slightly
@@ -221,7 +223,7 @@ The `child.js` could look like this:
 
     process.on('message', function(m, socket) {
       if (m === 'socket') {
-        socket.end('You where handled as a ' + process.argv[2] + ' person');
+        socket.end('You were handled as a ' + process.argv[2] + ' person');
       }
     });
 
@@ -250,6 +252,8 @@ there is no IPC channel keeping it alive. When calling this method the
     for stdio.  (See below)
   * `env` {Object} Environment key-value pairs
   * `detached` {Boolean} The child will be a process group leader.  (See below)
+  * `uid` {Number} Sets the user identity of the process. (See setuid(2).)
+  * `gid` {Number} Sets the group identity of the process. (See setgid(2).)
 * return: {ChildProcess object}
 
 Launches a new process with the given `command`, with  command line arguments in `args`.
@@ -432,6 +436,8 @@ See also: `child_process.exec()` and `child_process.fork()`
 * `options` {Object}
   * `cwd` {String} Current working directory of the child process
   * `stdio` {Array|String} Child's stdio configuration. (See above)
+    Only stdin is configurable, anything else will lead to unpredictable
+    results.
   * `customFds` {Array} **Deprecated** File descriptors for the child to use
     for stdio.  (See above)
   * `env` {Object} Environment key-value pairs
