@@ -1,6 +1,6 @@
 # nodedoc Changelog
 
-## 1.3.0 (not yet released)
+## 1.3.0
 
 - Added v0.10 docs (new default).
 - Updated docs to v0.8.22.
