@@ -1,5 +1,10 @@
 # nodedoc Changelog
 
+## 1.3.2 (not yet released)
+
+(nothing yet)
+
+
 ## 1.3.1
 
 - Fix `nodedoc --version` to report the correct version.
